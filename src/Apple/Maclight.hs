@@ -1,9 +1,8 @@
 module Apple.Maclight (
-  screenBacklight,
-  keyboardBacklight,
+  getDirectory,
+  Light(..),
   Command(..),
   Settings(..),
-  parseCommand,
   handleBacklight,
   ) where
 
@@ -13,32 +12,38 @@ import qualified System.IO.Strict as S
 
 data Command = Up | Down | Max | Off
 
+instance Read Command where
+  readsPrec _ s = case s of
+                    "up" -> [(Up, "")]
+                    "down" -> [(Down, "")]
+                    "max" -> [(Max, "")]
+                    "off" -> [(Off, "")]
+                    _ -> []
+
+data Light = Screen | Keyboard
+
+instance Read Light where
+  readsPrec _ s = case s of
+                    "screen" -> [(Screen, "")]
+                    "keyboard" -> [(Keyboard, "")]
+                    _ -> []
+
 data Settings = Settings { sysPath :: FilePath
                          , stepCount :: Int
                          }
 
-screenBacklight :: String
-screenBacklight = "/sys/class/backlight/intel_backlight/"
+getDirectory :: Light -> FilePath
+getDirectory Screen = "/sys/class/backlight/intel_backlight/"
+getDirectory Keyboard = "/sys/class/leds/smc::kbd_backlight/"
 
-keyboardBacklight :: String
-keyboardBacklight = "/sys/class/leds/smc::kbd_backlight/"
-
-parseCommand :: String -> Either Command String
-parseCommand "up" = Left Up
-parseCommand "down" = Left Down
-parseCommand "off" = Left Off
-parseCommand "max" = Left Max
-parseCommand c = Right $ "Invalid command " ++ c
-
-handleBacklight :: Settings -> Command -> IO ()
-handleBacklight settings command = do
-  let path = sysPath settings
-      steps = stepCount settings
+handleBacklight :: Light -> Command -> IO ()
+handleBacklight light command = do
+  let path = getDirectory light
   maxB <- readInt $ path </> "max_brightness"
   current <- readInt $ path </> "brightness"
   let new = case command of
-              Up -> min maxB (current + (maxB `div` steps))
-              Down -> max 0 (current - (maxB `div` steps))
+              Up -> min maxB (current + (maxB `div` 16))
+              Down -> max 0 (current - (maxB `div` 16))
               Max -> maxB
               Off -> 0
   writeFile (path </> "brightness") (show new)
