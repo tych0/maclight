@@ -1,4 +1,4 @@
-{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE ViewPatterns, PatternGuards #-}
 module Apple.Maclight (
   getDirectory,
   Light(..),
@@ -7,25 +7,21 @@ module Apple.Maclight (
   handleBacklight,
   ) where
 
+import Data.List
+
 import System.FilePath
 
 import qualified System.IO.Strict as S
 
 data Command = Up | Down | Max | Off | Set Int
 
-readMay :: String -> Maybe Int
-readMay i = case reads i of
-              [(n, "")] -> Just n
-              _ -> Nothing
-
 instance Read Command where
-  readsPrec _ s = case s of
-                    "up" -> [(Up, "")]
-                    "down" -> [(Down, "")]
-                    "max" -> [(Max, "")]
-                    "off" -> [(Off, "")]
-                    's':'e':'t':'=' : (readMay -> Just i) -> [(Set i, "")]
-                    _ -> []
+  readsPrec _ s | s == "up" = [(Up, "")]
+                | s == "down" = [(Down, "")]
+                | s == "max" = [(Max, "")]
+                | s == "off" = [(Off, "")]
+  readsPrec _ (stripPrefix "set=" -> Just s) = [(Set i, r) | (i, r) <- read s]
+  readsPrec _ _ = []
 
 data Light = Screen | Keyboard
 
