@@ -31,3 +31,14 @@ executable maclight
                  optparse-applicative >= 0.5, strict >= 0.3,
                  maclight >= 0.1.0.0
   ghc-options: -Wall
+
+test-suite MaclightTest.hs
+  hs-source-dirs: tests
+  main-is: MaclightTest.hs
+  type: exitcode-stdio-1.0
+  build-depends: base ==4.*,
+                 maclight >= 0.1.0.0,
+                 HUnit,
+                 test-framework,
+                 test-framework-hunit
+  ghc-options: -Wall

@@ -13,7 +13,9 @@ import System.FilePath
 
 import qualified System.IO.Strict as S
 
-data Command = Up | Down | Max | Off | Set Int
+import Debug.Trace
+
+data Command = Up | Down | Max | Off | Set Int deriving (Show, Eq)
 
 instance Read Command where
   readsPrec _ s | s == "up" = [(Up, "")]
@@ -21,7 +23,7 @@ instance Read Command where
                 | s == "max" = [(Max, "")]
                 | s == "off" = [(Off, "")]
   readsPrec _ (stripPrefix "set=" -> Just s) = [(Set i, r) | (i, r) <- read s]
-  readsPrec _ _ = []
+  readsPrec _ _ = (trace "notfound" [])
 
 data Light = Screen | Keyboard
 
