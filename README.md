@@ -1,8 +1,8 @@
 # Maclight - control your Mac's screen and keyboard light from linux
 
 Maclight is both a command line utility and a haskell library for controlling
-your Mac's screen and keyboard backlights from the command line. Installation
-on Debian-esque systems is typically something like:
+your Mac's screen and keyboard backlights on Linux. Installation on
+Debian-esque systems is typically something like:
 
     sudo apt-get install cabal-install
     cabal update
