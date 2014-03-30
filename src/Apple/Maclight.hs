@@ -1,3 +1,4 @@
+{-# LANGUAGE ViewPatterns #-}
 module Apple.Maclight (
   getDirectory,
   Light(..),
@@ -10,7 +11,12 @@ import System.FilePath
 
 import qualified System.IO.Strict as S
 
-data Command = Up | Down | Max | Off
+data Command = Up | Down | Max | Off | Set Int
+
+readMay :: String -> Maybe Int
+readMay i = case reads i of
+              [(n, "")] -> Just n
+              _ -> Nothing
 
 instance Read Command where
   readsPrec _ s = case s of
@@ -18,6 +24,7 @@ instance Read Command where
                     "down" -> [(Down, "")]
                     "max" -> [(Max, "")]
                     "off" -> [(Off, "")]
+                    's':'e':'t':'=' : (readMay -> Just i) -> [(Set i, "")]
                     _ -> []
 
 data Light = Screen | Keyboard
@@ -46,6 +53,7 @@ handleBacklight light command = do
               Down -> max 0 (current - (maxB `div` 16))
               Max -> maxB
               Off -> 0
+              Set i -> i
   writeFile (path </> "brightness") (show new)
     where
       readInt :: FilePath -> IO Int

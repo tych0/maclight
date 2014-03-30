@@ -15,7 +15,8 @@ options = MaclightOpts
        <> help "The backlight to control (one of 'keyboard' or 'screen')" )
     <*> argument auto
         ( metavar "CMD"
-       <> help "What to do to the backlight (one of up, down, max, or off)" )
+       <> help ( unlines ["What to do to the backlight ",
+                          "(one of up, down, max, off, or set=n)"] ))
 
 main :: IO ()
 main = execParser parser >>= run

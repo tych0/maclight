@@ -13,4 +13,8 @@ on Debian-esque systems is typically something like:
 
 The `maclight` binary is installed suid because the files used to control the
 lights are only accessable by root. However, the source is small, so hopefully
-(:D) there are no local root vulns.
+(:D) there are no local root vulns. Usage looks like:
+
+    maclight keyboard up
+    maclight screen set=300
+    maclight keyboard down
