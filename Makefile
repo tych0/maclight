@@ -3,8 +3,13 @@ PREFIX=/usr/local
 BIN=dist/build/maclight/maclight
 
 $(BIN): src
-	@cabal configure
+	@cabal configure --enable-tests
 	@cabal build
+
+.PHONY: test
+test:
+	cabal build
+	cabal test
 
 .PHONY: install
 install:
