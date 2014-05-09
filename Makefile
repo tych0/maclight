@@ -12,7 +12,7 @@ test:
 	cabal test
 
 .PHONY: install
-install:
+install: $(BIN)
 	@install -Dm 4755 $(BIN) $(PREFIX)/bin/maclight
 
 uninstall:
